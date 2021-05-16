@@ -54,4 +54,30 @@ router.put('/:id', (req, res) => {
     }
 } )
 
+router.delete('/:id', async (req, res) => {
+    const {id} = req.params
+     const project = await Project.get(id)
+    if(!project){
+        res.status(404).json({message: 'ID does not exist'})
+    } else {
+       await Project.remove(id)
+        .then( deleted => res.status(200).json(deleted))
+        .catch( err => {
+            console.log(err)
+            res.status(500).json({message: 'Something went wrong'})
+        } )
+    }
+})
+
+router.get('/:id/actions', (req, res) => {
+    const { id } = req.params
+    Project.getProjectActions(id)
+    .then( action => { 
+        action ? res.status(200).json(action) : res.status(404).json({message: 'actions not found'})} )
+    .catch( err => {
+        console.log(err)
+        res.status(500).json({message: 'Something went wrong'})
+    })
+})
+
 module.exports = router;
