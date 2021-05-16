@@ -23,4 +23,35 @@ router.get('/:id', (req, res) => {
     })
 })
 
+router.post('/',  (req,res)  => {
+    const project = req.body
+    if(!project.name || !project.description){
+        res.status(400).json({message: 'Missing values'})
+    } else {
+        Project.insert(project)
+        .then( newProject => res.status(201).json(newProject))
+        .catch( err => {
+            console.log(err)
+            res.status(500).json({message: 'Something went wrong'})
+        } )
+    }
+})
+
+router.put('/:id', (req, res) => {
+    const {id} = req.params
+    const project = req.body
+    if(!id){
+        res.status(404).json({message: 'ID does not exist'})
+    } else if(!project.name || !project.description){
+        res.status(400).json({message: 'Missing values'})
+    } else {
+        Project.update(id, project)
+        .then( changed => res.status(200).json(changed) )
+        .catch( err => {
+            console.log(err)
+            res.status(500).json({message: 'Something went wrong'})
+        } )
+    }
+} )
+
 module.exports = router;
